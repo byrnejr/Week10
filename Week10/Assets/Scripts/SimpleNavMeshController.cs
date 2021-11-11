@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityStandardAssets.Characters.ThirdPerson;
 
 public class SimpleNavMeshController : MonoBehaviour
 {
@@ -9,10 +10,14 @@ public class SimpleNavMeshController : MonoBehaviour
     private NavMeshAgent _agent;
     [SerializeField]
     private Camera _camera;
+
+    public ThirdPersonCharacter character;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        _camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        _agent.updateRotation = false;
     }
 
     // Update is called once per frame
@@ -24,6 +29,17 @@ public class SimpleNavMeshController : MonoBehaviour
             if (Physics.Raycast(ray, out var hit))
             {
                 _agent.SetDestination(hit.point);
+            }
+        }
+        if (character != null)
+        {
+            if (_agent.remainingDistance > _agent.stoppingDistance)
+            {
+                character.Move(_agent.desiredVelocity, false, false);
+            }
+            else
+            {
+                character.Move(Vector3.zero, false, false);
             }
         }
     }
